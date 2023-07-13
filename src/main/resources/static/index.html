@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</head>
+<body>
+    <h1>Lista de cumparaturi</h1>
+    <input id="new-todo">
+    <button id="add">Adauga</button>
+    <ul id="todos">
+
+    </ul>
+</body>
+<script>
+        var refresh=function(){
+            $.ajax({
+                url:"/get-all-todos"
+            }).done(function(response){
+                var todos=response;
+                var todosElement=document.getElementById("todos");
+                todosElement.innerText="";
+                for(var i=0; i<todos.length; i++){
+                    var newTodoLi=document.createElement('li');
+                    newTodoLi.innerText=todos[i].descriere;
+                    todosElement.append(newTodoLi);
+                }
+            });
+        }
+
+        refresh();
+
+      $("#add").click(function(){
+        var newTodo=$("#new-todo").val();
+        $("#new-todo").val("");
+            $.ajax({
+                url:"/add-new-todo",
+                type:"post",
+                data: JSON.stringify(
+                    {
+                        "descriere": newTodo,
+                        "cumparat": true
+                    }
+                ),
+                contentType:"application/json"
+            }).done(function(response){refresh();});
+      });
+    </script>
+</html>
